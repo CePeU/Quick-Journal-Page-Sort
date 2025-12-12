@@ -13,9 +13,26 @@ buttonAZ.className = 'sort-button';  // add own class for possible later styling
 buttonAZ.title = 'Sort A-Z';         // Native title for tooltip
 buttonAZ.innerHTML = '<i class="fa-regular fa-sort-alpha-down"></i>';  // A-Z font awesom icon/classes
 //add listener to the A-Z button
-buttonAZ.addEventListener('click', () => {
+buttonAZ.addEventListener('click', async () => {
+  const sheet = ui.activeWindow;
+  if (!sheet || sheet.document.documentName !== "JournalEntry" || !sheet.rendered) {
+    ui.notifications.warn("No journal is currently open.");
+    return;
+  }
+
   const journal = sheet.document;
-  console.log("Sort A-Z:", journal.name, journal.id);
+  const pages = journal.pages.contents;
+  if (!pages.length) {
+    ui.notifications.info("The open journal contains no pages.");
+    return;
+  }
+
+  // Sort A-Z (ascending)
+  const sorted = [...pages].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+  const updates = sorted.map((page, index) => ({ _id: page.id, sort: (index + 1) * 10 }));
+  
+  await journal.updateEmbeddedDocuments("JournalEntryPage", updates);
+  sheet.render(true);
 });
 
 // create the Z-A button
@@ -24,9 +41,26 @@ buttonZA.className = 'sort-button'; // add own class for possible later styling
 buttonZA.title = 'Sort Z-A'; // Native title for tooltip
 buttonZA.innerHTML = '<i class="fa-regular fa-sort-alpha-up-alt"></i>';  // Z-A font awesom icon/classes
 //add listener to the Z-A button
-buttonZA.addEventListener('click', () => {
+buttonZA.addEventListener('click', async () => {
+  const sheet = ui.activeWindow;
+  if (!sheet || sheet.document.documentName !== "JournalEntry" || !sheet.rendered) {
+    ui.notifications.warn("No journal is currently open.");
+    return;
+  }
+
   const journal = sheet.document;
-  console.log("Sort Z-A:", journal.name, journal.id);
+  const pages = journal.pages.contents;
+  if (!pages.length) {
+    ui.notifications.info("The open journal contains no pages.");
+    return;
+  }
+
+  // Sort Z-A (descending)
+  const sorted = [...pages].sort((a, b) => b.name.localeCompare(a.name, undefined, { sensitivity: "base" }));
+  const updates = sorted.map((page, index) => ({ _id: page.id, sort: (index + 1) * 10 }));
+  
+  await journal.updateEmbeddedDocuments("JournalEntryPage", updates);
+  sheet.render(true);
 });
 
 // create group div for new Buttons
