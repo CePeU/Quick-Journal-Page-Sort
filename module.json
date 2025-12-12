@@ -1,0 +1,25 @@
+{
+  "id": "quick-journal-page-sort",
+  "title": "Quick Journal Page Sort",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "12",
+    "maximum": "13"
+  },
+  "description": "Allows to sort journal pages alphabetical by adding a button in the journal page",
+  "authors": [
+    {
+      "name": "CePeU",
+      "discord": "CePeU",
+      "flags": {}
+    }
+  ],
+  "esmodules": [
+  "scripts/main.js"
+],
+  "styles": [
+    "styles/quick-journal-page-sort.css"
+  ],
+"url": "https://github.com/CePeU/Quick-Journal-Page-Sort"
+}
