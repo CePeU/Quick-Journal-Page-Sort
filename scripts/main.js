@@ -9,11 +9,17 @@ const major = parseInt(version.split('.')[0]);  // 12
 // sheet and html are not really necessary. Not yet sure what the best way to do this is though.
 if (major <= 12){
     Hooks.on("renderJournalSheet", (sheet, html, data) => {
+        //console.log("==sheet 12:",sheet)
+        //console.log("== html: 12",html)
+        //console.log("== data: 12",data)
         sortButtonCreation(sheet,html)
     })
 }
 if (major >= 13){
     Hooks.on("renderJournalEntrySheet", (sheet, html, data) => {
+        //console.log("==sheet: 13",sheet) 
+        //console.log("== html: 13",html)
+        //console.log("== data: 13",data)
         sortButtonCreation(sheet,html)
     })
 };
@@ -40,20 +46,20 @@ Hooks.on("ready", function() {
 // Render or Journal open/rendering function
 function sortButtonCreation(sheet, html) {
     //console.log("== A journal was rendered (opened)");
-    //console.log(sheet)
-    //console.log(html)
+
 
     //get the container div holding the prev, add page and next button
-    const container = document.querySelector("aside.journal-sidebar .action-buttons.flexrow");
-    const containerTag = container.tagName
+    const container = html.querySelector("aside.journal-sidebar .action-buttons.flexrow");
+    const containerTag = container.tagName 
     //console.log("Container Tag is:",containerTag)
+  
     // create the AZ button
     const buttonAZ = document.createElement('button');
     buttonAZ.className = 'sort-button';  // add own class for possible later styling
     buttonAZ.title = 'Sort A-Z';         // Native title for tooltip
     buttonAZ.innerHTML = '<i class="fa-regular fa-sort-alpha-down"></i>';  // A-Z font awesom icon/classes
     //add listener to the A-Z button
-    buttonAZ.addEventListener('click', () => sortJournalPages('asc'));
+    buttonAZ.addEventListener('click', () => sortJournalPages(sheet,'asc'));
 
 
     // create the Z-A button
@@ -62,7 +68,7 @@ function sortButtonCreation(sheet, html) {
     buttonZA.title = 'Sort Z-A'; // Native title for tooltip
     buttonZA.innerHTML = '<i class="fa-regular fa-sort-alpha-up-alt"></i>';  // Z-A font awesom icon/classes
     //add listener to the Z-A button
-    buttonZA.addEventListener('click', () => sortJournalPages('desc'));
+    buttonZA.addEventListener('click', () => sortJournalPages(sheet,'desc'));
 
 
     // create group div for new Buttons
@@ -90,8 +96,8 @@ function sortButtonCreation(sheet, html) {
     container.classList.remove('flexrow');
 
     // sorting function
-    async function sortJournalPages(direction = 'asc') {
-        const sheet = ui.activeWindow; // interaction should only be possible on an active window. But maybe sheet should trickle down?
+    async function sortJournalPages(sheetFromHook,direction = 'asc') {
+        const sheet = sheetFromHook //ui.activeWindow; // interaction should only be possible on an active window. But trickle down should make it safe
         if (!sheet || sheet.document.documentName !== "JournalEntry" || !sheet.rendered) {
             ui.notifications.warn("No journal is currently open.");
             return false;
