@@ -24,7 +24,7 @@ jobs:
           mkdir quick-journal-page-sort/scripts
           mkdir quick-journal-page-sort/styles
           cp module.json ./quick-journal-page-sort/
-          cp ./styles/styles.css ./quick-journal-page-sort/styles/
+          cp ./styles/quick-journal-page-sort.css ./quick-journal-page-sort/styles/
           cp ./scripts/main.js ./quick-journal-page-sort/scripts/
           zip -r quick-journal-page-sort.zip quick-journal-page-sort
 
