@@ -1,5 +1,7 @@
 name: Quick Journal Page Sort
 
+permissions:
+  contents: write  # Add this
 on:
   push:
     tags:
