@@ -10,9 +10,9 @@ const major = parseInt(version.split('.')[0]);  // 12
 if (major <= 12){
     Hooks.on("renderJournalSheet", (sheet, html, data) => {
         //console.log("==sheet 12:",sheet)
-        //console.log("== html: 12",html)
+        //console.log("== html: 12",html[0])
         //console.log("== data: 12",data)
-        sortButtonCreation(sheet,html)
+        sortButtonCreation(sheet,html[0])
     })
 }
 if (major >= 13){
@@ -51,7 +51,7 @@ function sortButtonCreation(sheet, html) {
     //get the container div holding the prev, add page and next button
     const container = html.querySelector("aside.journal-sidebar .action-buttons.flexrow");
     const containerTag = container.tagName 
-    //console.log("Container Tag is:",containerTag)
+    console.log("Container Tag is:",containerTag)
   
     // create the AZ button
     const buttonAZ = document.createElement('button');
