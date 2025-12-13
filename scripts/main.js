@@ -1,12 +1,52 @@
+Hooks.on("init", function() {
+  //console.log("== This code runs once the Foundry VTT software begins its initialization workflow.");
+
+
+const version = game.version;  // e.g., "12.999"
+const major = parseInt(version.split('.')[0]);  // 12
+//console.log(`Major version: ${major}`);
+
+// sheet and html are not really necessary. Not yet sure what the best way to do this is though.
+if (major <= 12){
+    Hooks.on("renderJournalSheet", (sheet, html, data) => {
+        sortButtonCreation(sheet,html)
+    })
+}
+if (major >= 13){
+    Hooks.on("renderJournalEntrySheet", (sheet, html, data) => {
+        sortButtonCreation(sheet,html)
+    })
+};
+
+});
+
+/*
+Hooks.on("ready", function() {
+  console.log("== This code runs once core initialization is ready and game data is available.");
+  console.log("== Existing registered Hook events",Hooks.events)
+});
+*/
+/*
+ Hooks.on("renderApplication", (app, html, data) => {
+    console.log("== Something was rendered (renderApplication)");
+    console.log(app)
+    console.log(html)
+  if (app.document?.type === "JournalEntry") {
+    console.log("== Journal sheet rendered");
+  }
+});*/
+
+
 // Render or Journal open/rendering function
-Hooks.on("renderJournalSheet", (sheet, html, data) => {
-    //console.log("A journal was rendered (opened)");
+function sortButtonCreation(sheet, html) {
+    //console.log("== A journal was rendered (opened)");
     //console.log(sheet)
     //console.log(html)
 
     //get the container div holding the prev, add page and next button
-    const container = document.querySelector("aside.journal-sidebar div.action-buttons.flexrow");
-
+    const container = document.querySelector("aside.journal-sidebar .action-buttons.flexrow");
+    const containerTag = container.tagName
+    //console.log("Container Tag is:",containerTag)
     // create the AZ button
     const buttonAZ = document.createElement('button');
     buttonAZ.className = 'sort-button';  // add own class for possible later styling
@@ -33,7 +73,7 @@ Hooks.on("renderJournalSheet", (sheet, html, data) => {
     newDiv.appendChild(buttonZA);
 
     //create group div which will hold the old buttons
-    const buttonsDiv = document.createElement('div');
+    const buttonsDiv = document.createElement(containerTag);
     // give the new group the old styling classed of the old group
     buttonsDiv.classList.add('action-buttons', 'flexrow');
     //move the old buttons into the new div
@@ -51,7 +91,7 @@ Hooks.on("renderJournalSheet", (sheet, html, data) => {
 
     // sorting function
     async function sortJournalPages(direction = 'asc') {
-        const sheet = ui.activeWindow;
+        const sheet = ui.activeWindow; // interaction should only be possible on an active window. But maybe sheet should trickle down?
         if (!sheet || sheet.document.documentName !== "JournalEntry" || !sheet.rendered) {
             ui.notifications.warn("No journal is currently open.");
             return false;
@@ -78,5 +118,5 @@ Hooks.on("renderJournalSheet", (sheet, html, data) => {
         return true;
     }
 
-});
+};
 
