@@ -1,7 +1,7 @@
 {
   "id": "quick-journal-page-sort",
   "title": "Quick Journal Page Sort",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "compatibility": {
     "minimum": "12",
     "verified": "12",
