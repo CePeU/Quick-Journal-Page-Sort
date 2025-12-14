@@ -24,7 +24,7 @@ if (major >= 13){
         //console.log("==sheet: 13",sheet) 
         //console.log("== html: 13",html)
         //console.log("== data: 13",data)
-        const qjpsButtonExists = html.find("aside.journal-sidebar .qjp-sort") ?? false;
+        const qjpsButtonExists = html.querySelector("aside.journal-sidebar .qjp-sort") ?? false;
         //console.log("Found what?: ",qjpsButtonExists)
         if (qjpsButtonExists) return;
         sortButtonCreation(sheet,html)
