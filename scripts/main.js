@@ -2,6 +2,7 @@ Hooks.on("init", function() {
   //console.log("== This code runs once the Foundry VTT software begins its initialization workflow.");
 
 
+
 const version = game.version;  // e.g., "12.999"
 const major = parseInt(version.split('.')[0]);  // 12
 //console.log(`Major version: ${major}`);
@@ -12,6 +13,9 @@ if (major <= 12){
         //console.log("==sheet 12:",sheet)
         //console.log("== html: 12",html[0])
         //console.log("== data: 12",data)
+        let qjpsButtonExists = html[0].querySelector("aside.journal-sidebar .qjp-sort") ?? false;
+        //console.log("Found what?: ",qjpsButtonExists)
+        if (qjpsButtonExists) return;
         sortButtonCreation(sheet,html[0])
     })
 }
@@ -20,6 +24,9 @@ if (major >= 13){
         //console.log("==sheet: 13",sheet) 
         //console.log("== html: 13",html)
         //console.log("== data: 13",data)
+        const qjpsButtonExists = html.find("aside.journal-sidebar .qjp-sort") ?? false;
+        //console.log("Found what?: ",qjpsButtonExists)
+        if (qjpsButtonExists) return;
         sortButtonCreation(sheet,html)
     })
 };
@@ -51,11 +58,11 @@ function sortButtonCreation(sheet, html) {
     //get the container div holding the prev, add page and next button
     const container = html.querySelector("aside.journal-sidebar .action-buttons.flexrow");
     const containerTag = container.tagName 
-    console.log("Container Tag is:",containerTag)
+    //console.log("Container Tag is:",containerTag)
   
     // create the AZ button
     const buttonAZ = document.createElement('button');
-    buttonAZ.className = 'sort-button';  // add own class for possible later styling
+    buttonAZ.className = 'qjp-sort-AZ';  // add own class for possible later styling
     buttonAZ.title = 'Sort A-Z';         // Native title for tooltip
     buttonAZ.innerHTML = '<i class="fa-regular fa-sort-alpha-down"></i>';  // A-Z font awesom icon/classes
     //add listener to the A-Z button
@@ -64,7 +71,7 @@ function sortButtonCreation(sheet, html) {
 
     // create the Z-A button
     const buttonZA = document.createElement('button');
-    buttonZA.className = 'sort-button'; // add own class for possible later styling
+    buttonZA.className = 'qjp-sort-ZA'; // add own class for possible later styling
     buttonZA.title = 'Sort Z-A'; // Native title for tooltip
     buttonZA.innerHTML = '<i class="fa-regular fa-sort-alpha-up-alt"></i>';  // Z-A font awesom icon/classes
     //add listener to the Z-A button
@@ -73,7 +80,7 @@ function sortButtonCreation(sheet, html) {
 
     // create group div for new Buttons
     const newDiv = document.createElement('div');
-    newDiv.classList.add('flexrow', 'sort-buttons');  // buttonS class added to div
+    newDiv.classList.add('flexrow', 'qjp-sort');  // buttonS class added to div
     //adding buttons to new group div
     newDiv.appendChild(buttonAZ);
     newDiv.appendChild(buttonZA);
