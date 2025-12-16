@@ -1,3 +1,8 @@
+## [1.0.x] / 202x-xx-xx
+### Added
+- Screenshot of journal with buttons
+- Screenshot of buttons to Readme
+
 ## [1.0.6] / 2025-09-14
 ### Added
 - Checks as precaution now if the buttons are allready present
