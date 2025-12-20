@@ -25,9 +25,11 @@ jobs:
           mkdir quick-journal-page-sort
           mkdir quick-journal-page-sort/scripts
           mkdir quick-journal-page-sort/styles
+          mkdir quick-journal-page-sort/lang
           cp module.json ./quick-journal-page-sort/
           cp ./styles/quick-journal-page-sort.css ./quick-journal-page-sort/styles/
           cp ./scripts/main.js ./quick-journal-page-sort/scripts/
+          cp ./lang/*.* ./quick-journal-page-sort/lang/
           zip -r quick-journal-page-sort.zip quick-journal-page-sort
 
       - name: Create release
