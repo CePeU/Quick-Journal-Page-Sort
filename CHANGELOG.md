@@ -1,4 +1,4 @@
-## [1.0.7] / 202x-xx-xx
+## [1.0.7] / 2025-12-20
 ### Added
 - quick-journal-page-sort.css which is strictly not necessary but allows more easily for independent styling
 - added english and german translation files
