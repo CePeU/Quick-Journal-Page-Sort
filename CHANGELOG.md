@@ -1,7 +1,14 @@
-## [1.0.x] / 202x-xx-xx
+## [1.0.7] / 202x-xx-xx
 ### Added
-- Screenshot of journal with buttons
-- Screenshot of buttons to Readme
+- quick-journal-page-sort.css which is strictly not necessary but allows more easily for independent styling
+- added english and german translation files
+
+### Changed
+- sort distance from 10 to 1000. Foundry uses SORT_INTEGER_DENSITY: 100000
+- added sort option "numeric: true" which should now sort pages with numbers according to the number
+- Changelog
+- version bump
+
 
 ## [1.0.6] / 2025-09-14
 ### Added
