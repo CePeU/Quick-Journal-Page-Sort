@@ -10,7 +10,7 @@
 - version bump
 
 
-## [1.0.6] / 2025-09-14
+## [1.0.6] / 2025-12-14
 ### Added
 - Checks as precaution now if the buttons are allready present
 ### Fixed
