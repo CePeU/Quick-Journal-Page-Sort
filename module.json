@@ -1,11 +1,11 @@
 {
   "id": "quick-journal-page-sort",
-  "title": "Quick Journal Page Sort",
-  "version": "1.0.7",
+  "title": "Quick-Journal-Page-Sort",
+  "version": "1.0.8",
   "compatibility": {
     "minimum": "12",
-    "verified": "13",
-    "maximum": "13"
+    "verified": "14",
+    "maximum": "14"
   },
   "description": "Allows to sort journal pages alphabetical by adding a button in the journal page",
   "authors": [
