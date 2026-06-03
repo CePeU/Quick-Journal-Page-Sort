@@ -1,3 +1,32 @@
+## [1.0.10] / 2025-06-03
+### Added
+- Settings slider was added to allow for size adjustments of buttons
+- css was adjusted to hold a css variable to set size of button
+- added ability to work in tandem with upcoming plugin Quick-Journal-Page-Back
+### Fixed
+### Changed
+- adjusted classes for compatibility with upcoming plugin Quick-Journal-Page-Back
+- changed name of main java script file to quick-journal-page-sort
+- version bump to 1.0.10
+### Removed
+### Deprecated
+### Security
+
+## [1.0.9] / 2026-05-30
+
+### Changed
+- Internal rework and testing
+
+## [1.0.8] / 2026-05-24
+
+### Changed
+- Adjusted css to font size 14 as used for Add Page Button
+- Adjusted css for using same color text color for buttons as Add Page Button
+- Tested for V14 and adjusted module.json for V14 compatibility
+- Changed title of Quick Journal Page Sort to hold dashes/Quick-Journal-Page-Sort this should group future modules better together  
+- Changelog
+- version bump
+
 ## [1.0.7] / 2025-12-20
 ### Added
 - quick-journal-page-sort.css which is strictly not necessary but allows more easily for independent styling

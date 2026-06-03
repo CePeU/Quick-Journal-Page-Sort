@@ -1,5 +1,9 @@
+//Quick-Journal-Page-Sort
+//CONFIG.debug.hooks = true
+let pageHistory = null;
+
 Hooks.on("init", function () {
-    //console.log("== This code runs once the Foundry VTT software begins its initialization workflow.");
+    
 
     const version = game.version;  // e.g., "12.999"
     const major = parseInt(version.split('.')[0]);  // 12 or 13
@@ -9,8 +13,8 @@ Hooks.on("init", function () {
         Hooks.on("renderJournalSheet", (sheet, html, data) => {
             //console.log("==sheet 12:",sheet)
             //console.log("== html: 12",html[0])
-            //console.log("== data: 12",data)
-            let qjpsButtonExists = html[0].querySelector("aside.journal-sidebar .qjp-sort") ?? false;
+            console.log("== data: 12",data)
+            let qjpsButtonExists = html[0].querySelector("aside.journal-sidebar .qjps") ?? false;
             //console.log("Found what?: ",qjpsButtonExists)
             if (qjpsButtonExists) return;
             sortButtonCreation(sheet, html[0])
@@ -20,15 +24,31 @@ Hooks.on("init", function () {
         Hooks.on("renderJournalEntrySheet", (sheet, html, data) => {
             //console.log("==sheet: 13",sheet) 
             //console.log("== html: 13",html)
-            //console.log("== data: 13",data)
-            const qjpsButtonExists = html.querySelector("aside.journal-sidebar .qjp-sort") ?? false;
-            //console.log("Found what?: ",qjpsButtonExists)
+            console.log("QJPS: == data: 13",data)
+            const qjpsButtonExists = html.querySelector("aside.journal-sidebar .qjps") ?? false;
+            console.log("QJPS: Found what?: ",qjpsButtonExists)
             if (qjpsButtonExists) return;
             sortButtonCreation(sheet, html)
         })
     };
 
+    // Register settings
+    game.settings.register("quick-journal-page-sort", "qjpsFontSize", {
+    name: game.i18n.localize("QJPS.settings.qjpsFontSize.name"),
+    hint: game.i18n.localize("QJPS.settings.qjpsFontSize.hint"),
+    scope: "client",
+    config: true,
+    type: Number,
+    default: 18,
+    range: { min: 8, max: 32, step:1 }
+    });
+
+    const fontSize = game.settings.get("quick-journal-page-sort", "qjpsFontSize");
+    document.documentElement.style.setProperty("--qjps-font-size", `${fontSize}px`)
+
+    console.log("QJPS: Quick-Journal-Page-Sort has been initialized");
 });
+
 
 // Render or Journal open/rendering function
 function sortButtonCreation(sheet, html) {
@@ -38,7 +58,7 @@ function sortButtonCreation(sheet, html) {
     //get the container div holding the prev, add page and next button
     const container = html.querySelector("aside.journal-sidebar .action-buttons.flexrow");
     const containerTag = container.tagName
-    //console.log("Container Tag is:",containerTag)
+    console.log("QJPS: Container Tag is:",containerTag)
 
     // create the AZ button
     const buttonAZ = document.createElement('button');
@@ -57,14 +77,35 @@ function sortButtonCreation(sheet, html) {
     //add listener to the Z-A button
     buttonZA.addEventListener('click', () => sortJournalPages(sheet, 'desc'));
 
+    console.log("QJPS: ZA Button: ",buttonZA)
 
+    let qjpContainer = html.querySelector(".qjp-buttons") ?? false;
+
+    console.log("QJPS: qipContainer ",qjpContainer);
+    if (qjpContainer) {
+        console.log("QJPS: BACK war zuerst da")
+console.log("QJPS: Normal Tree Choice 1")
+    qjpContainer.classList.add('qjps');
+    const targetButtonForward = html.querySelector(".qjp-buttons .qjp-forward");
+     
+    if (targetButtonForward) {
+    // AZ Button nach dem Forward-Button
+        targetButtonForward.insertAdjacentElement("afterend", buttonAZ);
+    }
+    const targetButtonBack = html.querySelector(".qjp-buttons .qjp-back");
+    if (targetButtonBack) {
+    // ZA Button vor dem Back-Button
+        targetButtonBack.insertAdjacentElement("beforebegin", buttonZA);
+    }
+    
+    } else {
     // create group div for new Buttons
+    console.log("QJPS: Else Tree reached")
     const newDiv = document.createElement('div');
-    newDiv.classList.add('flexrow', 'qjp-sort');  // buttonS class added to div
+    newDiv.classList.add('flexrow', 'qjp-buttons','qjps');  // buttonS class added to div
     //adding buttons to new group div
     newDiv.appendChild(buttonAZ);
     newDiv.appendChild(buttonZA);
-
     //create group div which will hold the old buttons
     const buttonsDiv = document.createElement(containerTag);
     // give the new group the old styling classed of the old group
@@ -77,10 +118,16 @@ function sortButtonCreation(sheet, html) {
     }
 
     //add both divs for new and old buttons to previous container
+    console.log("QJPS: Container before append child: ",container);
+    console.log("QJPS: newDiv before append child: ",newDiv);
+    console.log("QJPS: newDiv before append child: ",buttonsDiv);
+    
     container.appendChild(newDiv);
     container.appendChild(buttonsDiv);
     //remove the class flexrow from the previous container but keep action-buttons as it styles the container to be on the bottom of the pane
     container.classList.remove('flexrow');
+    console.log("QJPS: Conatiner element: ", container)
+    }
 
     // sorting function
     async function sortJournalPages(sheetFromHook, direction = 'asc') {
@@ -112,4 +159,3 @@ function sortButtonCreation(sheet, html) {
     }
 
 };
-

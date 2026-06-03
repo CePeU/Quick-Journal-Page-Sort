@@ -2,5 +2,7 @@
   "QJPS.SortAZ": "Sortierung A–Z",
   "QJPS.SortZA": "Sortierung Z–A",
   "QJPS.WarnNoJournal": "Es ist zur Zeit kein Journal geöffnet.",
-  "QJPS.InfoNoPages": "Das geöffnet Journal enthält keine Seiten."
+  "QJPS.InfoNoPages": "Das geöffnet Journal enthält keine Seiten.",
+  "QJPS.settings.qjpsFontSize.name": "Font Größe",
+  "QJPS.settings.qjpsFontSize.hint":"Die Font Größe wird beeinflussen wie groß die Schaltflächen sind. Eventuell muss mit F5 das Modul manuell neu geladen werden."
 }

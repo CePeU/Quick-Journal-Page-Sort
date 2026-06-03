@@ -1,6 +1,7 @@
-.journal-sidebar .qjp-sort button {
+.journal-sidebar .qjps button {
   padding-top: 1px;
   padding-bottom: 1px;
   /*background-color: aqua;*/
-  font-size: 20px;
+  font-size: var(--qjps-font-size);
+  /*font-size: 24px;*/
 }
