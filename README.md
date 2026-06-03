@@ -10,6 +10,8 @@ getting a usefull ordering is allways a hassle.
 This will also help anyone who writes a diary and will put dates up front in their page 
 titles and who wants to have the last entry at the top.   
 
+Also take a look at Quick-Journal-Page-Back to give you navigation history.
+
 The module can be installed with this link from the Foundry module page:
 
 https://github.com/CePeU/Quick-Journal-Page-Sort/releases/latest/download/module.json
