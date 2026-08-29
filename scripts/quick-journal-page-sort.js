@@ -13,7 +13,7 @@ Hooks.on("init", function () {
         Hooks.on("renderJournalSheet", (sheet, html, data) => {
             //console.log("==sheet 12:",sheet)
             //console.log("== html: 12",html[0])
-            console.log("== data: 12",data)
+            //console.log("== data: 12",data)
             let qjpsButtonExists = html[0].querySelector("aside.journal-sidebar .qjps") ?? false;
             //console.log("Found what?: ",qjpsButtonExists)
             if (qjpsButtonExists) return;
@@ -24,9 +24,9 @@ Hooks.on("init", function () {
         Hooks.on("renderJournalEntrySheet", (sheet, html, data) => {
             //console.log("==sheet: 13",sheet) 
             //console.log("== html: 13",html)
-            console.log("QJPS: == data: 13",data)
+            //console.log("QJPS: == data: 13",data)
             const qjpsButtonExists = html.querySelector("aside.journal-sidebar .qjps") ?? false;
-            console.log("QJPS: Found what?: ",qjpsButtonExists)
+            //console.log("QJPS: Found what?: ",qjpsButtonExists)
             if (qjpsButtonExists) return;
             sortButtonCreation(sheet, html)
         })
@@ -58,7 +58,7 @@ function sortButtonCreation(sheet, html) {
     //get the container div holding the prev, add page and next button
     const container = html.querySelector("aside.journal-sidebar .action-buttons.flexrow");
     const containerTag = container.tagName
-    console.log("QJPS: Container Tag is:",containerTag)
+    //console.log("QJPS: Container Tag is:",containerTag)
 
     // create the AZ button
     const buttonAZ = document.createElement('button');
@@ -77,30 +77,30 @@ function sortButtonCreation(sheet, html) {
     //add listener to the Z-A button
     buttonZA.addEventListener('click', () => sortJournalPages(sheet, 'desc'));
 
-    console.log("QJPS: ZA Button: ",buttonZA)
+    //console.log("QJPS: ZA Button: ",buttonZA)
 
     let qjpContainer = html.querySelector(".qjp-buttons") ?? false;
 
-    console.log("QJPS: qipContainer ",qjpContainer);
+    //console.log("QJPS: qipContainer ",qjpContainer);
     if (qjpContainer) {
-        console.log("QJPS: BACK war zuerst da")
-console.log("QJPS: Normal Tree Choice 1")
+    //console.log("QJPS: BACK war zuerst da")
+    //console.log("QJPS: Normal Tree Choice 1")
     qjpContainer.classList.add('qjps');
     const targetButtonForward = html.querySelector(".qjp-buttons .qjp-forward");
      
     if (targetButtonForward) {
-    // AZ Button nach dem Forward-Button
+    // AZ Button after the Forward-Button
         targetButtonForward.insertAdjacentElement("afterend", buttonAZ);
     }
     const targetButtonBack = html.querySelector(".qjp-buttons .qjp-back");
     if (targetButtonBack) {
-    // ZA Button vor dem Back-Button
+    // ZA Button before the Back-Button
         targetButtonBack.insertAdjacentElement("beforebegin", buttonZA);
     }
     
     } else {
     // create group div for new Buttons
-    console.log("QJPS: Else Tree reached")
+    //console.log("QJPS: Else Tree reached")
     const newDiv = document.createElement('div');
     newDiv.classList.add('flexrow', 'qjp-buttons','qjps');  // buttonS class added to div
     //adding buttons to new group div
@@ -118,15 +118,15 @@ console.log("QJPS: Normal Tree Choice 1")
     }
 
     //add both divs for new and old buttons to previous container
-    console.log("QJPS: Container before append child: ",container);
-    console.log("QJPS: newDiv before append child: ",newDiv);
-    console.log("QJPS: newDiv before append child: ",buttonsDiv);
+    //console.log("QJPS: Container before append child: ",container);
+    //console.log("QJPS: newDiv before append child: ",newDiv);
+    //console.log("QJPS: newDiv before append child: ",buttonsDiv);
     
     container.appendChild(newDiv);
     container.appendChild(buttonsDiv);
     //remove the class flexrow from the previous container but keep action-buttons as it styles the container to be on the bottom of the pane
     container.classList.remove('flexrow');
-    console.log("QJPS: Conatiner element: ", container)
+    //console.log("QJPS: Conatiner element: ", container)
     }
 
     // sorting function
@@ -138,7 +138,10 @@ console.log("QJPS: Normal Tree Choice 1")
         }
 
         const journal = sheet.document;
-        const pages = journal.pages.contents;
+        const journalPages = journal.pages.contents;
+        // filter for pages the player has access rights for
+        const pages = journalPages.filter(page => page.isOwner === true || page.limited === true);
+        //console.log("QJPS pages:",pages)
         if (!pages.length) {
             ui.notifications.info(game.i18n.localize("QJPS.InfoNoPages"));
             return false;
