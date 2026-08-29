@@ -1,4 +1,4 @@
-## [1.1.0] / 2025-06-03
+## [1.1.0] / 2026-08-29
 ### Added
 - players can now sort even if pages are contained in the journal they have no permission to access. This can lead to wierd looking sorting order
 BUT it also allows for the gamemaster to keep entries hidden and later reveal them and still allow players to sort
@@ -9,7 +9,7 @@ BUT it also allows for the gamemaster to keep entries hidden and later reveal th
 ### Deprecated
 ### Security
 
-## [1.0.10] / 2025-06-03
+## [1.0.10] / 2026-06-03
 ### Added
 - Settings slider was added to allow for size adjustments of buttons
 - css was adjusted to hold a css variable to set size of button
