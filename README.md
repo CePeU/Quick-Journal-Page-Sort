@@ -1,14 +1,14 @@
-﻿![GitHub Downloads (specific asset, latest release)](https://img.shields.io/github/downloads/CePeU/Quick-Journal-Page-Sort/latest/quick-journal-page-sort.zip)
+![GitHub Downloads (specific asset, latest release)](https://img.shields.io/github/downloads/CePeU/Quick-Journal-Page-Sort/latest/quick-journal-page-sort.zip)
 
 # Quick-Journal-Page-Sort
 
-A really small module to add two buttons to the journal to be able to sort pages  
-ascending or descending according to their title.   
+A really small module to add two buttons to the journal to be able to sort pages
+ascending or descending according to their title.
 
 As Foundry VTT is allways putting a new page at the end of a journal,
-getting a usefull ordering is allways a hassle.   
-This will also help anyone who writes a diary and will put dates up front in their page 
-titles and who wants to have the last entry at the top.   
+getting a usefull ordering is allways a hassle.
+This will also help anyone who writes a diary and will put dates up front in their page
+titles and who wants to have the last entry at the top.
 
 Also take a look at Quick-Journal-Page-Back to give you navigation history.
 
@@ -18,3 +18,13 @@ https://github.com/CePeU/Quick-Journal-Page-Sort/releases/latest/download/module
 
 ![Screenshot](https://github.com/CePeU/Quick-Journal-Page-Sort/blob/main/documentation/Screenshot.JPG)
 
+# Usage instructions
+With socketlib enabled and a GM connected, sorting reorders all pages in the
+journal, including pages hidden from the requesting player.
+
+Without a connected GM, players sort only pages they own. These pages are placed
+before the first page the player has no ownership for.
+
+If there are too few internal slots left to do that, they are placed after the last
+page the player has no access rights for. This is an edge case which is very likely
+to not occur.

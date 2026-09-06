@@ -1,3 +1,14 @@
+## [1.2.0] / 2026-09-07
+### Added
+- players can now sort ALL pages by using the socketlib library which routes the request to a connected GM player. Fallback remains that
+only pages are sorted which the player has owner permissions for.
+### Fixed
+### Changed
+- version bump to 1.2.0
+### Removed
+### Deprecated
+### Security
+
 ## [1.1.0] / 2026-08-29
 ### Added
 - players can now sort even if pages are contained in the journal they have no permission to access. This can lead to wierd looking sorting order

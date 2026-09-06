@@ -1,4 +1,7 @@
 {
+  "QJPS.ErrorSocketNotReady": "Socketlib is not ready. Check that it is enabled and restart the world.",
+  "QJPS.WarnNoGM": "A GM must be connected to sort journal pages.",
+  "QJPS.ErrorSortFailed": "Journal sorting failed. See the console for details.",
   "QJPS.SortAZ": "Sort A–Z",
   "QJPS.SortZA": "Sort Z–A",
   "QJPS.WarnNoJournal": "No journal is currently open.",
