@@ -1,4 +1,6 @@
 {
+  "QJPS.settings.dateSort.name":"Enable date sort selection",
+  "QJPS.settings.dateSort.hint":"Allows to toggle sort buttons with the CTRL (control key) and use date sorting. This will sort the pages by creation date.",
   "QJPS.ErrorSocketNotReady": "Socketlib is not ready. Check that it is enabled and restart the world.",
   "QJPS.WarnNoGM": "A GM must be connected to sort journal pages.",
   "QJPS.ErrorSortFailed": "Journal sorting failed. See the console for details.",
@@ -8,4 +10,5 @@
   "QJPS.InfoNoPages": "The open journal contains no pages.",
   "QJPS.settings.qjpsFontSize.name": "Font Size",
   "QJPS.settings.qjpsFontSize.hint":"The font size will determine how big the buttons are going to be. For changes to take effect you probably need to trigger it manually by pressing F5."
+
 }

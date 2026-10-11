@@ -3,19 +3,23 @@
 const MODULE_ID = "quick-journal-page-sort";
 
 let socket = null;
+let controlHeld = false;
 
-Hooks.once("socketlib.ready", () => {
-    socket = socketlib.registerModule(MODULE_ID);
-    if (!socket) {
-        console.error(`${MODULE_ID} | Socket registration failed. Check the manifest and restart the world.`);
-        return;
-    }
-    socket.register("socketLibSortJournalPages", socketLibSortJournalPages);
-});
+function updateSortButtonAppearance(button,hover) {
+ //console.log("Update Button",button)
+  if (controlHeld && hover) {
+    button.classList.add("qjp-sort-control-active");
+    button.innerHTML = button.sortIcon; // or change icon/title
+  } else {
+    button.classList.remove("qjp-sort-control-active");
+    button.innerHTML = button.icon;
+  }
+}
+
 
 // socketlib supplies the requesting user's ID through this.socketdata.
 // Resolve documents on the GM client; sheets cannot be sent over a socket.
-async function socketLibSortJournalPages(journalId, direction) {
+async function socketLibSortJournalPages(journalId, direction,datesort) {
     if (!game.user.isGM) throw new Error("Sorting must execute on a GM client.");
     if (typeof journalId !== "string" || !["asc", "desc"].includes(direction)) {
         throw new Error("Invalid sort request.");
@@ -28,7 +32,12 @@ async function socketLibSortJournalPages(journalId, direction) {
     if (!journal.pages.contents.some(page => page.testUserPermission(requester, "LIMITED"))) {
         return false;
     }
-    const sorted = sortPagesByName(journal.pages.contents, direction);
+    let sorted;
+    if(datesort){
+     sorted = sortPagesByCreatedTime(journal.pages.contents, direction);
+    } else {
+     sorted = sortPagesByName(journal.pages.contents, direction);
+    }
     const updates = sorted.map((page, index) => ({ _id: page.id, sort: (index + 1) * 1000 }));
     await journal.updateEmbeddedDocuments("JournalEntryPage", updates);
     return true;
@@ -42,9 +51,22 @@ function sortPagesByName(pages, direction) {
     });
 }
 
-async function sortOwnedJournalPages(journal, direction) {
+function sortPagesByCreatedTime(pages, direction) {
+  if (!["asc", "desc"].includes(direction)) throw new Error("Invalid sort direction.")
+  return [...pages].sort((a, b) => {
+    const comparison = a._stats.createdTime - b._stats.createdTime;
+    return direction === "desc" ? -comparison : comparison;
+  });
+}
+
+async function sortOwnedJournalPages(journal, direction,datesort) {
     const pages = journal.pages.contents;
-    const sorted = sortPagesByName(pages.filter(page => page.isOwner), direction);
+    let sorted;
+    if(datesort){
+        sorted = sortPagesByCreatedTime(pages.filter(page => page.isOwner), direction);
+    } else {
+        sorted = sortPagesByName(pages.filter(page => page.isOwner), direction);
+    }
     if (!sorted.length) return false;
 
     const lowestSort = Math.min(...pages.map(page => page.sort));
@@ -63,7 +85,7 @@ async function sortOwnedJournalPages(journal, direction) {
     return true;
 }
 
-async function requestJournalSort(sheet, direction) {
+async function requestJournalSort(sheet, direction,datesort) {
     const journal = sheet.document ?? sheet.object;
     if (journal?.documentName !== "JournalEntry" || !sheet.rendered) {
         ui.notifications.warn(game.i18n.localize("QJPS.WarnNoJournal"));
@@ -72,13 +94,14 @@ async function requestJournalSort(sheet, direction) {
     try {
         let changed;
         if (!game.user.isGM && !game.users.activeGM) {
-            changed = await sortOwnedJournalPages(journal, direction);
+            changed = await sortOwnedJournalPages(journal, direction,datesort);
         } else {
             if (!socket) {
                 ui.notifications.error(game.i18n.localize("QJPS.ErrorSocketNotReady"));
                 return;
             }
-            changed = await socket.executeAsGM("socketLibSortJournalPages", journal.id, direction);
+            console.log("T1: Executing as GM")
+            changed = await socket.executeAsGM("socketLibSortJournalPages", journal.id, direction,datesort);
         }
         if (!changed) ui.notifications.info(game.i18n.localize("QJPS.InfoNoPages"));
         else sheet.render(true);
@@ -87,55 +110,6 @@ async function requestJournalSort(sheet, direction) {
         ui.notifications.error(game.i18n.localize("QJPS.ErrorSortFailed"));
     }
 }
-
-Hooks.on("ready", function () {
-
-    const version = game.version;  // e.g., "12.999"
-    const major = parseInt(version.split('.')[0]);  // 12 or 13
-
-    // sheet and html are passed down to the following functions making sure the html of the respective button is changed
-    if (major <= 12) {
-        Hooks.on("renderJournalSheet", (sheet, html, data) => {
-            //console.log("==sheet 12:",sheet)
-            //console.log("== html: 12",html[0])
-            //console.log("== data: 12",data)
-            let qjpsButtonExists = html[0].querySelector("aside.journal-sidebar .qjps") ?? false;
-            //console.log("Found what?: ",qjpsButtonExists)
-            if (qjpsButtonExists) return;
-            sortButtonCreation(sheet, html[0])
-        })
-    }
-    if (major >= 13) {
-        Hooks.on("renderJournalEntrySheet", (sheet, html, data) => {
-            //console.log("==sheet: 13",sheet)
-            //console.log("== html: 13",html)
-            //console.log("QJPS: == data: 13",data)
-            const qjpsButtonExists = html.querySelector("aside.journal-sidebar .qjps") ?? false;
-            //console.log("QJPS: Found what?: ",qjpsButtonExists)
-            if (qjpsButtonExists) return;
-            sortButtonCreation(sheet, html)
-        })
-    };
-
-    // Register settings
-    game.settings.register("quick-journal-page-sort", "qjpsFontSize", {
-        name: game.i18n.localize("QJPS.settings.qjpsFontSize.name"),
-        hint: game.i18n.localize("QJPS.settings.qjpsFontSize.hint"),
-        scope: "client",
-        config: true,
-        type: Number,
-        default: 18,
-        range: { min: 8, max: 32, step: 1 }
-    });
-
-    const fontSize = game.settings.get("quick-journal-page-sort", "qjpsFontSize");
-    document.documentElement.style.setProperty("--qjps-font-size", `${fontSize}px`)
-
-    console.log("QJPS: Quick-Journal-Page-Sort has been initialized");
-});
-
-
-
 
 // Render or Journal open/rendering function
 function sortButtonCreation(sheet, html) {
@@ -149,29 +123,58 @@ function sortButtonCreation(sheet, html) {
 
     // create the AZ button
     const buttonAZ = document.createElement('button');
-    buttonAZ.className = 'qjp-sort-AZ';  // add own class for possible later styling
+    buttonAZ.classList.add('qjp-sort-buttons', 'qjp-sort-AZ'); // add own qjp-sort-AZ class for possible later styling
+    buttonAZ.icon = `<i class="fa-regular fa-sort-alpha-down"></i>`
+    buttonAZ.sortIcon = `
+    <i class="fa-regular fa-sort-alpha-down"></i>
+    <i class="fa-regular fa-calendar-minus"></i>`
+    
     buttonAZ.title = game.i18n.localize("QJPS.SortAZ");         // Native title for tooltip
-    buttonAZ.innerHTML = '<i class="fa-regular fa-sort-alpha-down"></i>';  // A-Z font awesom icon/classes
-    //add listener to the A-Z button
+    buttonAZ.innerHTML = buttonAZ.icon;  // A-Z font awesom icon/classes
+    //add listeners to the A-Z button
     buttonAZ.type = "button";
-    buttonAZ.addEventListener('click', () => requestJournalSort(sheet, 'asc'));
+    buttonAZ.addEventListener('click', () =>{ 
+        if(controlHeld){
+         requestJournalSort(sheet, 'asc', true)
+        } else {
+            requestJournalSort(sheet, 'asc',false)
+        }
+        
+        });
+
+    //change looks of button if button has been left and is not hovered anymore
+    buttonAZ.addEventListener('mouseleave', () => document.querySelectorAll(".qjp-sort-buttons").forEach((button) => updateSortButtonAppearance(button,false)));
 
     // create the Z-A button
     const buttonZA = document.createElement('button');
-    buttonZA.className = 'qjp-sort-ZA'; // add own class for possible later styling
+    buttonZA.classList.add('qjp-sort-buttons', 'qjp-sort-ZA'); // add own qjp-sort-ZA class for possible later styling
+    buttonZA.icon = `<i class="fa-regular fa-sort-alpha-up-alt"></i>`
+    buttonZA.sortIcon = `
+    <i class="fa-regular fa-sort-alpha-up-alt"></i>
+    <i class="fa-regular fa-calendar-plus"></i>`
+    
     buttonZA.title = game.i18n.localize("QJPS.SortZA"); // Native title for tooltip
-    buttonZA.innerHTML = '<i class="fa-regular fa-sort-alpha-up-alt"></i>';  // Z-A font awesom icon/classes
-    //add listener to the Z-A button
+    buttonZA.innerHTML = buttonZA.icon;  // Z-A font awesom icon/classes
+    //add listeners to the Z-A button
     buttonZA.type = "button";
-    buttonZA.addEventListener('click', () => requestJournalSort(sheet, 'desc'));
+    buttonZA.addEventListener('click', () =>{ 
+        if(controlHeld){
+         requestJournalSort(sheet, 'desc', true)
+        } else {
+            requestJournalSort(sheet, 'desc',false)
+        }
+        
+        });
 
     //console.log("QJPS: ZA Button: ",buttonZA)
+    //change looks of button if button has been left and is not hovered anymore
+    buttonZA.addEventListener('mouseleave', () => document.querySelectorAll(".qjp-sort-buttons").forEach((button) => updateSortButtonAppearance(button,false)));
 
     let qjpContainer = html.querySelector(".qjp-buttons") ?? false;
 
     //console.log("QJPS: qipContainer ",qjpContainer);
     if (qjpContainer) {
-        //console.log("QJPS: BACK war zuerst da")
+        //console.log("QJPS: QJP-BACK was  first")
         //console.log("QJPS: Normal Tree Choice 1")
         qjpContainer.classList.add('qjps');
         const targetButtonForward = html.querySelector(".qjp-buttons .qjp-forward");
@@ -218,3 +221,110 @@ function sortButtonCreation(sheet, html) {
     }
 
 };
+
+Hooks.on("ready", function () {
+
+    const version = game.version;  // e.g., "12.999"
+    const major = parseInt(version.split('.')[0]);  // 12 or 13
+
+    // sheet and html are passed down to the following functions making sure the html of the respective button is changed
+    if (major <= 12) {
+        Hooks.on("renderJournalSheet", (sheet, html, data) => {
+            //console.log("==sheet 12:",sheet)
+            //console.log("== html: 12",html[0])
+            //console.log("== data: 12",data)
+            let qjpsButtonExists = html[0].querySelector("aside.journal-sidebar .qjps") ?? false;
+            //console.log("Found what?: ",qjpsButtonExists)
+            if (qjpsButtonExists) return;
+            sortButtonCreation(sheet, html[0])
+        })
+    }
+    if (major >= 13) {
+        Hooks.on("renderJournalEntrySheet", (sheet, html, data) => {
+            //console.log("==sheet: 13",sheet)
+            //console.log("== html: 13",html)
+            //console.log("QJPS: == data: 13",data)
+            const qjpsButtonExists = html.querySelector("aside.journal-sidebar .qjps") ?? false;
+            //console.log("QJPS: Found what?: ",qjpsButtonExists)
+            if (qjpsButtonExists) return;
+            sortButtonCreation(sheet, html)
+        })
+    };
+
+    // Register settings
+    game.settings.register("quick-journal-page-sort", "qjpsFontSize", {
+        name: game.i18n.localize("QJPS.settings.qjpsFontSize.name"),
+        hint: game.i18n.localize("QJPS.settings.qjpsFontSize.hint"),
+        scope: "client",
+        config: true,
+        type: Number,
+        default: 18,
+        range: { min: 8, max: 32, step: 1 }
+    });
+
+
+
+    const fontSize = game.settings.get("quick-journal-page-sort", "qjpsFontSize");
+    document.documentElement.style.setProperty("--qjps-font-size", `${fontSize}px`)
+
+    console.log("QJPS: Quick-Journal-Page-Sort has been initialized");
+});
+
+Hooks.once("init", () => {
+    // Register settings if control key should be used
+    game.settings.register("quick-journal-page-sort", "dateSort", {
+        name: game.i18n.localize("QJPS.settings.dateSort.name"),
+        hint: game.i18n.localize("QJPS.settings.dateSort.hint"),
+        scope: "client",
+        config: true,
+        type: Boolean,
+        default: true,
+    });
+})
+
+Hooks.once("ready", () => {
+ 
+  window.addEventListener("keydown", (event) => {
+    //console.log("Event: ",event)
+    if (event.key !== "Control") return;
+    let isControlKeyUsed = game.settings.get("quick-journal-page-sort", "dateSort");
+    if(!isControlKeyUsed) return;
+
+    controlHeld = true;
+    //if the control key press takes place on the button while it is hovered on
+    //  search all hovered buttons (should be one) and if one is found use it as trigger
+    // then change the appearance of all sort buttons
+    const hoverButton = document.querySelectorAll(".qjp-sort-buttons:hover");
+    console.log("Hover Button",hoverButton)
+    if (hoverButton.length > 0){
+        document.querySelectorAll(".qjp-sort-buttons").forEach((button) => updateSortButtonAppearance(button,true));
+    }
+    
+  });
+
+  window.addEventListener("keyup", (event) => {
+    if (event.key !== "Control") return;
+    
+      controlHeld = false;
+    
+      document.querySelectorAll(".qjp-sort-buttons").forEach((button) => updateSortButtonAppearance(button,true));
+    
+  });
+
+  //set control key status to false if document/foundry looses focus
+  window.addEventListener("blur", () => {
+    controlHeld = false;
+
+    document.querySelectorAll(".qjp-sort-buttons").forEach((button) => updateSortButtonAppearance(button,false))
+  });
+
+})
+
+Hooks.once("socketlib.ready", () => {
+    socket = socketlib.registerModule(MODULE_ID);
+    if (!socket) {
+        console.error(`${MODULE_ID} | Socket registration failed. Check the manifest and restart the world.`);
+        return;
+    }
+    socket.register("socketLibSortJournalPages", socketLibSortJournalPages);
+});
