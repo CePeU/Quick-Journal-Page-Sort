@@ -3,7 +3,7 @@
 # Quick-Journal-Page-Sort
 
 A really small module to add two buttons to the journal to be able to sort pages
-ascending or descending according to their title.
+ascending or descending according to their title or their creation date.
 
 As Foundry VTT is allways putting a new page at the end of a journal,
 getting a usefull ordering is allways a hassle.
@@ -16,9 +16,12 @@ The module can be installed with this link from the Foundry module page:
 
 https://github.com/CePeU/Quick-Journal-Page-Sort/releases/latest/download/module.json
 
-![Screenshot](https://github.com/CePeU/Quick-Journal-Page-Sort/blob/main/documentation/Screenshot.JPG)
+![Showcase](https://github.com/CePeU/Quick-Journal-Page-Sort/blob/main/documentation/Showcase.gif)
 
 # Usage instructions
+You can switch between page title sorting and creation date sorting by pressing and holding
+the CTRL key while hovering over the sort buttons.
+
 With socketlib enabled and a GM connected, sorting reorders all pages in the
 journal, including pages hidden from the requesting player.
 

@@ -1,3 +1,12 @@
+## [1.3.0] / 2026-10-11
+### Added
+- Holding the CTRL key and hovering over the sort buttons and clicking them will now allow to trigger date sorting by creation date
+### Changed
+- version bump to 1.3.0
+### Removed
+### Deprecated
+### Security
+
 ## [1.2.0] / 2026-09-07
 ### Added
 - players can now sort ALL pages by using the socketlib library which routes the request to a connected GM player. Fallback remains that
