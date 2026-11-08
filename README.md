@@ -1,8 +1,6 @@
-![GitHub Downloads (specific asset, latest release)](https://img.shields.io/github/downloads/CePeU/Quick-Journal-Page-Sort/latest/quick-journal-page-sort.zip)
-
 ![Total Module Downloads (All Versions)](https://img.shields.io/github/downloads/CePeU/Quick-Journal-Page-Sort/quick-journal-page-sort.zip?label=Total%20Module%20Downloads&color=blue&displayAssetName=false)
 
-![Latest Module Downloads](https://img.shields.io/github/downloads/CePeU/Quick-Journal-Page-Sort/latest/quick-journal-page-sort.zip?displayAssetName=false&label=Latest%20Module%20Downloads&color=green)
+![Latest Module Downloads](https://img.shields.io/github/downloads/CePeU/Quick-Journal-Page-Sort/latest/quick-journal-page-sort.zip?displayAssetName=false&label=Latest%20Module%20Version%20Downloads&color=green)
 
 # Quick-Journal-Page-Sort
 
